@@ -6,7 +6,8 @@ export default function main(app) {
   const storageStack = new StorageStack(app, "storage");
 
   const apiStack = new ApiStack(app, "api", {
-    table: storageStack.table,
+    notesTable: storageStack.notesTable,
+    allowencesTable: storageStack.allowencesTable,
   });
 
   new AuthStack(app, "auth", {

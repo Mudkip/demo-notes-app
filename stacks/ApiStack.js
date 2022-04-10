@@ -6,13 +6,16 @@ export default class ApiStack extends sst.Stack {
   constructor(scope, id, props) {
     super(scope, id, props);
 
-    const { table } = props;
+    const { notesTable, allowencesTable } = props;
 
     this.api = new sst.Api(this, "Api", {
       defaultAuthorizationType: "AWS_IAM",
       defaultFunctionProps: {
         environment: {
-          TABLE_NAME: table.tableName,
+          NOTES_TABLE_NAME: notesTable.tableName,
+          ALLOWENCES_TABLE_NAME: allowencesTable.tableName,
+          FREE_NOTES:process.env.FREE_NOTES,
+          STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         },
       },
       routes: {
@@ -21,10 +24,11 @@ export default class ApiStack extends sst.Stack {
         "GET    /notes/{id}": "src/get.main",
         "PUT    /notes/{id}": "src/update.main",
         "DELETE /notes/{id}": "src/delete.main",
+        "POST   /billing":    "src/billing.main",
       },
     });
 
-    this.api.attachPermissions([table]);
+    this.api.attachPermissions([notesTable, allowencesTable]);
 
     this.addOutputs({
       ApiEndpoint: this.api.url,
