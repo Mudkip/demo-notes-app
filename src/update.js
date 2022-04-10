@@ -1,4 +1,3 @@
-import * as uuid from "uuid";
 import handler from "./util/handler";
 import dynamoDb from "./util/dynamodb";
 
@@ -7,7 +6,7 @@ export const main = handler(async (event) => {
   const params = {
     TableName: process.env.TABLE_NAME,
     Key: {
-      userId: "123",
+      userId: event.requestContext.identity.cognitoIdentityId,
       noteId: event.pathParameters.id,
     },
     UpdateExpression: "SET content = :content, attachment = :attachment",
